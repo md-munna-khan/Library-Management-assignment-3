@@ -21,6 +21,13 @@ const borrowSchema = new Schema<Borrow>({
     type:Date,
     required:true
   }
+},
+{
+  versionKey:false,
+  timestamps:true
 });
-
-export const BorrowModel=model<Borrow>("Borrow",borrowSchema)
+// creating a custom Static method
+// borrowSchema.static("bookQuantity",async function {
+  
+// })
+export const BorrowModel=model("Borrow",borrowSchema)

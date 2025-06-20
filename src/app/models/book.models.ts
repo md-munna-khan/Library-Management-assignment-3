@@ -48,6 +48,11 @@ const bookSchema = new Schema<Books>({
     type: Boolean,
     default: true,
   },
+  
+},
+{
+    versionKey:false,
+    timestamps:true
 });
 
-export const BookModel = model<Books>("Book", bookSchema);
+export const BookModel = model("Book", bookSchema);
