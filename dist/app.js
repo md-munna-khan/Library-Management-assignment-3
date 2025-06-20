@@ -11,6 +11,6 @@ app.use(express_1.default.json());
 app.use("/books", books_controller_1.booksRoutes);
 app.use("/borrow", borrow_controller_1.borrowsRoutes);
 app.get("/", (req, res) => {
-    res.send("Welcome to Note App");
+    res.send("Welcome to Library Management App");
 });
 exports.default = app;

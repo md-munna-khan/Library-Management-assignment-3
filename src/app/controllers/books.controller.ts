@@ -37,7 +37,7 @@ booksRoutes.get("/", async (req: Request, res: Response) => {
       books= await BookModel.find()
     }
     // ============================ sorting ========================
-    books = await BookModel.find().sort({"createdAt":1}).limit(1)
+    books = await BookModel.find().sort({"createdAt":1}).limit(10)
     //===================== Limit ====================
     // books= await BookModel.find().limit(1)
     // const book = await BookModel.find(body);

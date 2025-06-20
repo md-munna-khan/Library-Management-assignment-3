@@ -1,3 +1,4 @@
+
 import {  Model, Types } from "mongoose";
 
 export interface Borrow{
@@ -6,6 +7,6 @@ export interface Borrow{
   dueDate:Date;
 } 
 
-export interface BookStaticMethods extends Model<Borrow>{
-  bookQuantity(quantity:number):number
+export interface borrowStaticMethod extends Model<Borrow> {
+Borrow(bookId:string,quantity:number,dueDate:Date):Promise<Borrow>
 }
