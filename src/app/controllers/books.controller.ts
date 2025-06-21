@@ -3,7 +3,7 @@ import { BookModel } from "../models/book.models";
 export const booksRoutes = express.Router();
 
 // book -post
-booksRoutes.post("/create-book", async (req: Request, res: Response) => {
+booksRoutes.post("/", async (req: Request, res: Response) => {
   const body = req.body;
   try {
     const data = await BookModel.create(body);
@@ -13,6 +13,7 @@ booksRoutes.post("/create-book", async (req: Request, res: Response) => {
       data,
     });
   } catch (error: any) {
+    console.log(error)
     res.status(400).json({
       message: "Validation failed",
       success: false,
@@ -111,7 +112,7 @@ booksRoutes.delete("/:booksId", async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       message: "Book deleted successfully",
-      data,
+      data:null,
     });
   } catch (error: any) {
     res.status(400).json({

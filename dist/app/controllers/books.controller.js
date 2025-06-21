@@ -17,7 +17,7 @@ const express_1 = __importDefault(require("express"));
 const book_models_1 = require("../models/book.models");
 exports.booksRoutes = express_1.default.Router();
 // book -post
-exports.booksRoutes.post("/create-book", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.booksRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     try {
         const data = yield book_models_1.BookModel.create(body);
@@ -28,6 +28,7 @@ exports.booksRoutes.post("/create-book", (req, res) => __awaiter(void 0, void 0,
         });
     }
     catch (error) {
+        console.log(error);
         res.status(400).json({
             message: "Validation failed",
             success: false,
@@ -40,26 +41,22 @@ exports.booksRoutes.post("/create-book", (req, res) => __awaiter(void 0, void 0,
 // book -get all
 exports.booksRoutes.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const body = req.body;
-        let data = [];
-        // ================= filtering by genre ===================
-        const bookGenre = req.query.genre ? req.query.genre : "";
-        console.log(bookGenre);
-        if (bookGenre) {
-            data = yield book_models_1.BookModel.find({ genre: bookGenre });
+        // =============== Query parameters ============
+        const filterGenre = req.query.filter || "";
+        const sortBy = req.query.sortBy || "createAt";
+        const sortOrder = req.query.sort === "desc" ? -1 : 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const filter = {};
+        if (filterGenre) {
+            filter.genre = filterGenre;
         }
-        else {
-            data = yield book_models_1.BookModel.find();
-        }
-        // ============================ sorting ========================
-        data = yield book_models_1.BookModel.find().sort({ "createdAt": 1 }).limit(10);
-        //===================== Limit ====================
-        // books= await BookModel.find().limit(1)
-        // const book = await BookModel.find(body);
+        const data = yield book_models_1.BookModel.find(filter)
+            .sort({ [sortBy]: sortOrder })
+            .limit(limit);
         res.status(201).json({
             success: true,
             message: "Books retrieved successfully",
-            data
+            data,
         });
     }
     catch (error) {
@@ -76,35 +73,34 @@ exports.booksRoutes.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
 exports.booksRoutes.get("/:booksId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bookId = req.params.booksId;
-        const data = yield book_models_1.BookModel.findById(bookId);
+        const data = yield book_models_1.BookModel.findOne({ _id: bookId });
         res.status(201).json({
             success: true,
             message: "Book retrieved successfully",
-            data
+            data,
         });
     }
     catch (error) {
         res.status(400).json({
-            message: "Validation failed",
+            message: error.message,
             success: false,
-            error: error.name === "ValidationError"
-                ? { name: error.name, errors: error.errors }
-                : error,
+            error: error,
         });
     }
 }));
 // book - update single  id
-exports.booksRoutes.patch("/:booksId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.booksRoutes.put("/:booksId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const booksId = req.params.booksId;
         const updateBooks = req.body;
         const data = yield book_models_1.BookModel.findByIdAndUpdate(booksId, updateBooks, {
-            new: true
+            new: true,
+            runValidators: true,
         });
         res.status(201).json({
             success: true,
             message: "Book updated successfully",
-            data
+            data,
         });
     }
     catch (error) {
@@ -125,16 +121,14 @@ exports.booksRoutes.delete("/:booksId", (req, res) => __awaiter(void 0, void 0, 
         res.status(201).json({
             success: true,
             message: "Book deleted successfully",
-            data
+            data: null,
         });
     }
     catch (error) {
         res.status(400).json({
-            message: "Validation failed",
+            message: error.message,
             success: false,
-            error: error.name === "ValidationError"
-                ? { name: error.name, errors: error.errors }
-                : error,
+            error: error,
         });
     }
 }));

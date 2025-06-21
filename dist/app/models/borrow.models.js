@@ -49,20 +49,16 @@ const borrowSchema = new mongoose_1.Schema({
     book: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "Book",
-        required: true
+        required: [true, "Book reference is required."]
     },
     quantity: {
         type: Number,
-        required: true,
-        validate: {
-            validator: Number.isInteger,
-            message: 'Quantity must be an integer.'
-        },
-        min: [1, 'Quantity must be at least 1.']
+        required: [true, "Quantity is required."],
+        min: [1, "Quantity must be at least 1."]
     },
     dueDate: {
         type: Date,
-        required: true
+        required: [true, "Due date is required."]
     }
 }, {
     versionKey: false,
@@ -79,7 +75,7 @@ borrowSchema.statics.Borrow = function (bookId, quantity, dueDate) {
             throw new Error("Not enough copies available");
         }
         // Update book
-        book.copies = quantity;
+        book.copies -= quantity;
         if (book.copies === 0) {
             book.available = false;
         }

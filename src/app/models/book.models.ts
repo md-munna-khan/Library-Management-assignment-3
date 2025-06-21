@@ -54,6 +54,10 @@ bookSchema.post("findOne", function (doc, next) {
   }
   next();
 });
+// query middleware
+bookSchema.pre('deleteOne', { document: true, query: false }, function() {
+  console.log('Deleting doc!');
+});
 
 
 export const BookModel = model("Book", bookSchema);

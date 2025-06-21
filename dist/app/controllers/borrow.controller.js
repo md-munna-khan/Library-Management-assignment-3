@@ -17,10 +17,8 @@ const express_1 = __importDefault(require("express"));
 const borrow_models_1 = require("../models/borrow.models");
 exports.borrowsRoutes = express_1.default.Router();
 // borrow -post
-exports.borrowsRoutes.post("/create-borrow", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.borrowsRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        //   const body = req.body;
-        // const book = await BorrowModel.create(body);
         const { book, quantity, dueDate } = req.body;
         const data = yield borrow_models_1.BorrowModel.Borrow(book, quantity, new Date(dueDate));
         res.status(201).json({
@@ -31,11 +29,9 @@ exports.borrowsRoutes.post("/create-borrow", (req, res) => __awaiter(void 0, voi
     }
     catch (error) {
         res.status(400).json({
-            message: "Validation failed",
+            message: error.message,
             success: false,
-            error: error.name === "ValidationError"
-                ? { name: error.name, errors: error.errors }
-                : error,
+            error: error
         });
     }
 }));
