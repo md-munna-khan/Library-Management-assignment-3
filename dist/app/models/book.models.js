@@ -52,4 +52,9 @@ const bookSchema = new mongoose_1.Schema({
     versionKey: false,
     timestamps: true
 });
+// query middleware
+bookSchema.pre("find", function (next) {
+    console.log("inside pre find hook");
+    next();
+});
 exports.BookModel = (0, mongoose_1.model)("Book", bookSchema);

@@ -5,6 +5,6 @@ export interface Books extends Document{
     isbn:string,
     description?:string,
     copies:number,
-    available:boolean,
+    available?:boolean,
    
 }

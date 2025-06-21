@@ -4,23 +4,19 @@ import { BookModel } from "./book.models";
 
 
 const borrowSchema = new Schema<Borrow,borrowStaticMethod>({
-  book:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"Book",
-    required:true
+  book: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Book",
+    required: [true, "Book reference is required."]
   },
-  quantity:{
-    type:Number,
-    required:true,
-    validate:{
-        validator:Number.isInteger,
-        message:'Quantity must be an integer.'
-    },
-    min: [1, 'Quantity must be at least 1.']
+  quantity: {
+    type: Number,
+    required: [true, "Quantity is required."],
+    min: [1, "Quantity must be at least 1."]
   },
-  dueDate:{
-    type:Date,
-    required:true
+  dueDate: {
+    type: Date,
+    required: [true, "Due date is required."]
   }
 },
 {
@@ -43,7 +39,7 @@ borrowSchema.statics.Borrow = async function (
   }
 
   // Update book
-  book.copies = quantity;
+  book.copies -= quantity;
   if (book.copies === 0) {
     book.available = false;
   }

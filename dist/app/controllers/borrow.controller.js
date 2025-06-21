@@ -16,15 +16,17 @@ exports.borrowsRoutes = void 0;
 const express_1 = __importDefault(require("express"));
 const borrow_models_1 = require("../models/borrow.models");
 exports.borrowsRoutes = express_1.default.Router();
-// book -post
+// borrow -post
 exports.borrowsRoutes.post("/create-borrow", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const body = req.body;
     try {
-        const book = yield borrow_models_1.BorrowModel.create(body);
+        //   const body = req.body;
+        // const book = await BorrowModel.create(body);
+        const { book, quantity, dueDate } = req.body;
+        const data = yield borrow_models_1.BorrowModel.Borrow(book, quantity, new Date(dueDate));
         res.status(201).json({
             success: true,
             message: "Book borrowed successfully",
-            book,
+            data
         });
     }
     catch (error) {
@@ -34,6 +36,50 @@ exports.borrowsRoutes.post("/create-borrow", (req, res) => __awaiter(void 0, voi
             error: error.name === "ValidationError"
                 ? { name: error.name, errors: error.errors }
                 : error,
+        });
+    }
+}));
+// borrow get
+exports.borrowsRoutes.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield borrow_models_1.BorrowModel.aggregate([
+            {
+                $group: {
+                    _id: "$book",
+                    totalQuantity: { $sum: "$quantity" },
+                },
+            },
+            {
+                $lookup: {
+                    from: "books",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "bookDetails",
+                },
+            },
+            { $unwind: "$bookDetails" },
+            {
+                $project: {
+                    _id: 0,
+                    book: {
+                        title: "$bookDetails.title",
+                        isbn: "$bookDetails.isbn"
+                    },
+                    totalQuantity: 1
+                }
+            }
+        ]);
+        res.status(200).json({
+            success: true,
+            message: "Borrowed books summary retrieved successfully",
+            data,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch borrow summary",
+            error: error.message,
         });
     }
 }));

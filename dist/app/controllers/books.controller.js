@@ -20,11 +20,11 @@ exports.booksRoutes = express_1.default.Router();
 exports.booksRoutes.post("/create-book", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     try {
-        const book = yield book_models_1.BookModel.create(body);
+        const data = yield book_models_1.BookModel.create(body);
         res.status(201).json({
             success: true,
             message: "Book created successfully",
-            book,
+            data,
         });
     }
     catch (error) {
@@ -41,25 +41,25 @@ exports.booksRoutes.post("/create-book", (req, res) => __awaiter(void 0, void 0,
 exports.booksRoutes.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = req.body;
-        let books = [];
+        let data = [];
         // ================= filtering by genre ===================
         const bookGenre = req.query.genre ? req.query.genre : "";
         console.log(bookGenre);
         if (bookGenre) {
-            books = yield book_models_1.BookModel.find({ genre: bookGenre });
+            data = yield book_models_1.BookModel.find({ genre: bookGenre });
         }
         else {
-            books = yield book_models_1.BookModel.find();
+            data = yield book_models_1.BookModel.find();
         }
         // ============================ sorting ========================
-        books = yield book_models_1.BookModel.find().sort({ "createdAt": 1 }).limit(1);
+        data = yield book_models_1.BookModel.find().sort({ "createdAt": 1 }).limit(10);
         //===================== Limit ====================
         // books= await BookModel.find().limit(1)
         // const book = await BookModel.find(body);
         res.status(201).json({
             success: true,
             message: "Books retrieved successfully",
-            books,
+            data
         });
     }
     catch (error) {
@@ -76,11 +76,11 @@ exports.booksRoutes.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
 exports.booksRoutes.get("/:booksId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bookId = req.params.booksId;
-        const books = yield book_models_1.BookModel.findById(bookId);
+        const data = yield book_models_1.BookModel.findById(bookId);
         res.status(201).json({
             success: true,
             message: "Book retrieved successfully",
-            books,
+            data
         });
     }
     catch (error) {
@@ -98,13 +98,13 @@ exports.booksRoutes.patch("/:booksId", (req, res) => __awaiter(void 0, void 0, v
     try {
         const booksId = req.params.booksId;
         const updateBooks = req.body;
-        const books = yield book_models_1.BookModel.findByIdAndUpdate(booksId, updateBooks, {
+        const data = yield book_models_1.BookModel.findByIdAndUpdate(booksId, updateBooks, {
             new: true
         });
         res.status(201).json({
             success: true,
             message: "Book updated successfully",
-            books,
+            data
         });
     }
     catch (error) {
@@ -121,11 +121,11 @@ exports.booksRoutes.patch("/:booksId", (req, res) => __awaiter(void 0, void 0, v
 exports.booksRoutes.delete("/:booksId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const booksId = req.params.booksId;
-        const books = yield book_models_1.BookModel.findByIdAndDelete({ _id: booksId });
+        const data = yield book_models_1.BookModel.findByIdAndDelete({ _id: booksId });
         res.status(201).json({
             success: true,
             message: "Book deleted successfully",
-            books,
+            data
         });
     }
     catch (error) {

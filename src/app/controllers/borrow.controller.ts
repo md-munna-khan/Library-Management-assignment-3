@@ -6,24 +6,20 @@ export const borrowsRoutes = express.Router();
 // borrow -post
 borrowsRoutes.post("/create-borrow", async (req: Request, res: Response) => {
   try {
-    //   const body = req.body;
-    // const book = await BorrowModel.create(body);
+
     const { book, quantity, dueDate } = req.body;
 
-    const borrow = await BorrowModel.Borrow(book, quantity, new Date(dueDate));
+    const data = await BorrowModel.Borrow(book, quantity, new Date(dueDate));
     res.status(201).json({
       success: true,
       message: "Book borrowed successfully",
-      borrow,
+     data
     });
   } catch (error: any) {
     res.status(400).json({
-      message: "Validation failed",
+       message:error.message,
       success: false,
-      error:
-        error.name === "ValidationError"
-          ? { name: error.name, errors: error.errors }
-          : error,
+      error:error
     });
   }
 });
@@ -54,9 +50,11 @@ borrowsRoutes.get("/", async (req: Request, res: Response) => {
             title: "$bookDetails.title",
             isbn: "$bookDetails.isbn"
           },
-           totalQuantity: 1
-        },
-      },
+         totalQuantity: 1
+        }
+         
+      }
+      
     ]);
 
     res.status(200).json({

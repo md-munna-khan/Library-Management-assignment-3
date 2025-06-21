@@ -32,9 +32,19 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BorrowModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const book_models_1 = require("./book.models");
 const borrowSchema = new mongoose_1.Schema({
     book: {
         type: mongoose_1.default.Schema.Types.ObjectId,
@@ -58,4 +68,29 @@ const borrowSchema = new mongoose_1.Schema({
     versionKey: false,
     timestamps: true
 });
+// creating a custom Static method
+//  Static Method: borrowBook
+borrowSchema.statics.Borrow = function (bookId, quantity, dueDate) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const book = yield book_models_1.BookModel.findById(bookId);
+        if (!book)
+            throw new Error("Book not found");
+        if (book.copies < quantity) {
+            throw new Error("Not enough copies available");
+        }
+        // Update book
+        book.copies = quantity;
+        if (book.copies === 0) {
+            book.available = false;
+        }
+        yield book.save();
+        // Create and return borrow record
+        const borrowRecord = yield this.create({
+            book: book._id,
+            quantity,
+            dueDate,
+        });
+        return borrowRecord;
+    });
+};
 exports.BorrowModel = (0, mongoose_1.model)("Borrow", borrowSchema);

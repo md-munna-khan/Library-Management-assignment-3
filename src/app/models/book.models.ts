@@ -4,57 +4,56 @@ import { Books } from "../interfaces/book.interface";
 const bookSchema = new Schema<Books>({
   title: {
     type: String,
-    required: true,
+    required: [true, "Book title is required."],
     trim: true,
   },
   author: {
     type: String,
-    required: true,
+    required: [true, "Author name is required."],
     trim: true,
   },
   genre: {
     type: String,
-    enum: [
-      "FICTION",
-      " NON_FICTION",
-      "SCIENCE",
-      "HISTORY",
-      "BIOGRAPHY",
-      "FANTASY",
-    ],
-    required: true,
+    enum: {
+      values: ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"],
+      message: "Genre must be one of: FICTION, NON_FICTION, SCIENCE, HISTORY, BIOGRAPHY, or FANTASY",
+    },
+    required: [true, "Genre is required."],
     trim: true,
   },
   isbn: {
     type: String,
-    required: true,
+    required: [true, "ISBN (International Standard Book Number) is required."],
     trim: true,
-    unique: [true, " The book’s International Standard Book Number"],
+    unique: [true, "ISBN must be unique"]
   },
   description: {
     type: String,
-
     trim: true,
   },
   copies: {
     type: Number,
-    min: [0, "Copies cannot be negative"],
-    validate: {
-      validator: Number.isInteger,
-      message: "Copies must be an integer",
-    },
+    required: [true, "Number of copies is required."],
+    min: [0, "Number of copies must be a positive number."],
   },
   available: {
     type: Boolean,
     default: true,
-  },
-  
+  }
 },
-{
-    versionKey:false,
-    timestamps:true
-});
+  {
+    versionKey: false,
+    timestamps: true,
+  }
+);
 
+// query middleware
+bookSchema.post("findOne", function (doc, next) {
+  if (!doc) {
+   throw new Error("Book not found");
+  }
+  next();
+});
 
 
 export const BookModel = model("Book", bookSchema);
