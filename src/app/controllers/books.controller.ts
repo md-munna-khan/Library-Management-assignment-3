@@ -18,7 +18,7 @@ booksRoutes.post("/create-book", async (req: Request, res: Response) => {
       success: false,
       error:
         error.name === "ValidationError"
-          ? { name:error.name, errors: error.errors }
+          ? { name: error.name, errors: error.errors }
           : error,
     });
   }
@@ -26,26 +26,24 @@ booksRoutes.post("/create-book", async (req: Request, res: Response) => {
 // book -get all
 booksRoutes.get("/", async (req: Request, res: Response) => {
   try {
-    const body = req.body;
-  
-    let data=[]
-    // ================= filtering by genre ===================
-    const bookGenre = req.query.genre ? req.query.genre : "";
-    console.log(bookGenre);
-    if(bookGenre){
-      data= await BookModel.find({genre:bookGenre})
-    }else{
-      data= await BookModel.find()
+    // =============== Query parameters ============
+    const filterGenre = (req.query.filter as string) || "";
+    const sortBy = (req.query.sortBy as string) || "createAt";
+    const sortOrder = req.query.sort === "desc" ? -1 : 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const filter: any = {};
+    if (filterGenre) {
+      filter.genre = filterGenre;
     }
-    // ============================ sorting ========================
-    data = await BookModel.find().sort({"createdAt":1}).limit(10)
-    //===================== Limit ====================
-    // books= await BookModel.find().limit(1)
-    // const book = await BookModel.find(body);
+    const data = await BookModel.find(filter)
+      .sort({ [sortBy]: sortOrder })
+      .limit(limit);
+
     res.status(201).json({
       success: true,
       message: "Books retrieved successfully",
-      data
+      data,
     });
   } catch (error: any) {
     res.status(400).json({
@@ -61,37 +59,36 @@ booksRoutes.get("/", async (req: Request, res: Response) => {
 // book - single id
 booksRoutes.get("/:booksId", async (req: Request, res: Response) => {
   try {
-   const bookId = req.params.booksId;
-   const data = await BookModel.findOne({_id:bookId})
-    
+    const bookId = req.params.booksId;
+    const data = await BookModel.findOne({ _id: bookId });
+
     res.status(201).json({
       success: true,
       message: "Book retrieved successfully",
-      data
+      data,
     });
   } catch (error: any) {
     res.status(400).json({
-      message:error.message,
+      message: error.message,
       success: false,
-      error:error
-       
+      error: error,
     });
   }
 });
 // book - update single  id
 booksRoutes.put("/:booksId", async (req: Request, res: Response) => {
   try {
-   const booksId = req.params.booksId;
-   const updateBooks=req.body;
-   const data = await BookModel.findByIdAndUpdate(booksId,updateBooks,{
-    new:true,runValidators:true
-   });
-   
-    
+    const booksId = req.params.booksId;
+    const updateBooks = req.body;
+    const data = await BookModel.findByIdAndUpdate(booksId, updateBooks, {
+      new: true,
+      runValidators: true,
+    });
+
     res.status(201).json({
       success: true,
       message: "Book updated successfully",
-      data
+      data,
     });
   } catch (error: any) {
     res.status(400).json({
@@ -107,21 +104,20 @@ booksRoutes.put("/:booksId", async (req: Request, res: Response) => {
 // book - delete id
 booksRoutes.delete("/:booksId", async (req: Request, res: Response) => {
   try {
-   const booksId = req.params.booksId;
-   
-   const data = await BookModel.findByIdAndDelete({_id:booksId})
-   
-    
+    const booksId = req.params.booksId;
+
+    const data = await BookModel.findByIdAndDelete({ _id: booksId });
+
     res.status(201).json({
       success: true,
       message: "Book deleted successfully",
-     data
+      data,
     });
   } catch (error: any) {
     res.status(400).json({
-      message:error.message,
+      message: error.message,
       success: false,
-      error:error
+      error: error,
     });
   }
 });
