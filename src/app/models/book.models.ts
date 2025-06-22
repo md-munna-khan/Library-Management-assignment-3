@@ -66,7 +66,20 @@ bookSchema.pre("findOne", function (next) {
   next();
 });
 
-
+// bookSchema.pre('save', function(next) {
+//   if (!this.title) {
+//     return next(new Error('Title is required!'));
+//   }
+  
+//   next();
+// });
+bookSchema.post("findOne", function (doc, next) {
+  if (!doc) {
+    return next(new Error("Book not found"));
+  }
+ 
+  next();
+});
 
     
 

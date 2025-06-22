@@ -60,12 +60,16 @@ bookSchema.pre("findOne", function (next) {
     console.log("Pre findOne query filter:", this.getQuery());
     next();
 });
-// query middleware
-// bookSchema.post("findOneAndDelete", async function (doc, next) {
-//   if (doc) {
-//     console.log(doc, "post worked");
-//     await BookModel.deleteMany({ userId: doc.userId }); // ✅ Correct field
+// bookSchema.pre('save', function(next) {
+//   if (!this.title) {
+//     return next(new Error('Title is required!'));
 //   }
 //   next();
 // });
+bookSchema.post("findOne", function (doc, next) {
+    if (!doc) {
+        return next(new Error("Book not found"));
+    }
+    next();
+});
 exports.BookModel = (0, mongoose_1.model)("Book", bookSchema);
