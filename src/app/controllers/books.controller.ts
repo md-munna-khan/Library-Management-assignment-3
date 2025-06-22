@@ -5,8 +5,7 @@ import { z } from "zod";
 const CreateBookZodSchema = z.object({
  title:z.string(),
     author:z.string(),
-    genre: z.enum(
-    ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"],),
+    genre: z.string(),
     isbn:z.string(),
     description:z.string().optional(),
     copies:z.number(),
