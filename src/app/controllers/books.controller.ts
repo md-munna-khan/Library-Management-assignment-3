@@ -2,15 +2,16 @@ import express, { Request, Response } from "express";
 import { BookModel } from "../models/book.models";
 export const booksRoutes = express.Router();
 import { z } from "zod";
-const CreateBookZodSchema = z.object({
- title:z.string(),
-    author:z.string(),
-    genre: z.string(),
-    isbn:z.string(),
-    description:z.string().optional(),
-    copies:z.number(),
-    available:z.boolean().optional(),
+export const CreateBookZodSchema = z.object({
+  title: z.string().min(1, "Book title is required"),
+  author: z.string().min(1, "Author name is required"),
+  genre: z.enum(["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"]),
+  isbn: z.string().min(1, "ISBN is required"),
+  description: z.string().optional(),
+  copies: z.number().min(0, "Copies must be a positive number"),
+  available: z.boolean().optional(),
 });
+
 // book -post
 booksRoutes.post("/", async (req: Request, res: Response) => {
   

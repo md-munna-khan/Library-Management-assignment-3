@@ -63,14 +63,25 @@ pre('deleteOne') — logs before deleting
 BookSchema.static('borrowBook') — custom logic to deduct quantity and update availability
 ## API Endpoints
 
-### GET /api/books
+
 ✅ Create Book
 
 ##### POST /api/books
 
+
+
+### POST /api/books
+
+Create a new book.
+
+Request Body:
+```bash
+{ "title": "The Theory of Everything", "author": "Stephen Hawking", "genre": "SCIENCE", "isbn": "9780553380165", "description": "An overview of cosmology and black holes.", "copies": 5 }
+```
+---
 ##### Get all books with optional filtering, sorting, and limiting.
 
-
+### GET /api/books
 Query Parameters:
 - `filter`: Filter by genre (e.g., SCIENCE)
 - `sortBy`: Sort field (e.g., createdAt)
@@ -83,16 +94,23 @@ GET /api/books?filter=FANTASY&sortBy=createdAt&sort=desc&limit=5
 
 ---
 
-### POST /api/books
 
-Create a new book.
-
-Request Body:
+###  Get Book by ID
 ```bash
-{ "title": "The Theory of Everything", "author": "Stephen Hawking", "genre": "SCIENCE", "isbn": "9780553380165", "description": "An overview of cosmology and black holes.", "copies": 5 }
+GET /api/books/:bookId
 ```
----
-
+###  Update Book
+```bash
+PUT /api/books/:bookId
+```
+Example:
+```bash
+{ "copies": 10 }
+```
+✅ Delete Book
+```bash
+DELETE /api/books/:bookId
+```
 ### POST /api/borrows
 
 Borrow a book.
@@ -128,7 +146,6 @@ Sample Response:
 ```bash
 {
   "success": true,
-  "message": "Borrowed books summary retrieved successfully",
   "data": [
     {
       "book": {
@@ -139,6 +156,7 @@ Sample Response:
     }
   ]
 }
+
 ``` 
 ---
 

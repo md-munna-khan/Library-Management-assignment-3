@@ -12,24 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.booksRoutes = void 0;
+exports.CreateBookZodSchema = exports.booksRoutes = void 0;
 const express_1 = __importDefault(require("express"));
 const book_models_1 = require("../models/book.models");
 exports.booksRoutes = express_1.default.Router();
 const zod_1 = require("zod");
-const CreateBookZodSchema = zod_1.z.object({
-    title: zod_1.z.string(),
-    author: zod_1.z.string(),
+exports.CreateBookZodSchema = zod_1.z.object({
+    title: zod_1.z.string().min(1, "Book title is required"),
+    author: zod_1.z.string().min(1, "Author name is required"),
     genre: zod_1.z.enum(["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"]),
-    isbn: zod_1.z.string(),
+    isbn: zod_1.z.string().min(1, "ISBN is required"),
     description: zod_1.z.string().optional(),
-    copies: zod_1.z.number(),
+    copies: zod_1.z.number().min(0, "Copies must be a positive number"),
     available: zod_1.z.boolean().optional(),
 });
 // book -post
 exports.booksRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const zodBody = CreateBookZodSchema.parse(req.body);
+        const zodBody = exports.CreateBookZodSchema.parse(req.body);
         const data = yield book_models_1.BookModel.create(zodBody);
         res.status(201).json({
             success: true,
