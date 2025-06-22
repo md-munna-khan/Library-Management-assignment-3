@@ -61,15 +61,13 @@ const bookSchema = new Schema<IBooks>(
 );
 
 // query middleware
-bookSchema.post("findOne", function (doc, next) {
-  if (!doc) {
-    throw new Error("Book not found");
-  }
+bookSchema.pre("findOne", function (next) {
+  console.log("Pre findOne query filter:", this.getQuery());
   next();
 });
-// query middleware
-// bookSchema.pre('deleteOne', { document: true, query: false }, function() {
-//   console.log('Deleting doc!');
-// });
+
+
+
+    
 
 export const BookModel = model<IBooks>("Book", bookSchema);

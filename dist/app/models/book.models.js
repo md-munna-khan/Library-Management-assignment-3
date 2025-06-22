@@ -56,14 +56,16 @@ const bookSchema = new mongoose_1.Schema({
     timestamps: true,
 });
 // query middleware
-bookSchema.post("findOne", function (doc, next) {
-    if (!doc) {
-        throw new Error("Book not found");
-    }
+bookSchema.pre("findOne", function (next) {
+    console.log("Pre findOne query filter:", this.getQuery());
     next();
 });
 // query middleware
-// bookSchema.pre('deleteOne', { document: true, query: false }, function() {
-//   console.log('Deleting doc!');
+// bookSchema.post("findOneAndDelete", async function (doc, next) {
+//   if (doc) {
+//     console.log(doc, "post worked");
+//     await BookModel.deleteMany({ userId: doc.userId }); // ✅ Correct field
+//   }
+//   next();
 // });
 exports.BookModel = (0, mongoose_1.model)("Book", bookSchema);
