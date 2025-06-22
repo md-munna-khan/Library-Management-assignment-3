@@ -26,20 +26,50 @@ Node.js, Express.js, TypeScript, MongoDB, Mongoose, Dotenv, Nodemon
 
 ## Getting Started
 
-To run this project locally:
+## 📦 Installation & Setup
 
-1. Clone the project:
+1. **Clone the repo**
+
+```bash
+git clone https://github.com/md-munna-khan/Library-Management-assignment-3.git
+cd Library-Management-assignment-3
+```
+2. Install Dependencies
+```bash
+npm install
+```
+3. Create .env File
+```bash
+PORT=5000
+DATABASE_URL=mongodb://localhost:27017/libraryDB
+```
+4. Run the Server
+```bash
+npm run dev     # For development
+npm run build   # Compile TypeScript
+npm start       # Run in production
+```
 
 
 Server will run on: `http://localhost:5000`
 
 ---
 
+ ##### Middleware & Methods
+post('findOne') — throws error if book not found
+
+pre('deleteOne') — logs before deleting
+
+BookSchema.static('borrowBook') — custom logic to deduct quantity and update availability
 ## API Endpoints
 
 ### GET /api/books
+✅ Create Book
 
-Get all books with optional filtering, sorting, and limiting.
+##### POST /api/books
+
+##### Get all books with optional filtering, sorting, and limiting.
+
 
 Query Parameters:
 - `filter`: Filter by genre (e.g., SCIENCE)
@@ -67,20 +97,49 @@ Request Body:
 
 Borrow a book.
 
-Request Body:
 
-{ "book": "60f1a4e8fc13ae5c30000001", "quantity": 2, "dueDate": "2025-07-10" }
+##### Business Logic:
 
+Check if enough copies exist
+
+Deduct borrowed quantity
+
+Set available to false if copies = 0
+
+POST /api/borrow
+
+```bash
+
+
+{
+  "book": "64ab3f9e2a4b5c6d7e8f9012",
+  "quantity": 2,
+  "dueDate": "2025-07-18T00:00:00.000Z"
+}
+
+```
 ---
 
-### GET /api/borrows
+### GET /api/borrow
 
 Returns borrowed books summary using aggregation.
 
 Sample Response:
-
-{ "success": true, "data": [ { "book": { "title": "The Theory of Everything", "isbn": "9780553380165" }, "totalQuantity": 5 } ] }
-
+```bash
+{
+  "success": true,
+  "message": "Borrowed books summary retrieved successfully",
+  "data": [
+    {
+      "book": {
+        "title": "The Theory of Everything",
+        "isbn": "9780553380163"
+      },
+      "totalQuantity": 5
+    }
+  ]
+}
+``` 
 ---
 
 ## Validation Rules
@@ -116,7 +175,19 @@ Borrow Schema:
 3. Lookup book details from Book collection  
 4. Return book title, isbn, and total quantity in response
 
+#  Zod Validation in Library Management API
+
+This project uses **Zod** — a TypeScript-first schema declaration and validation library — to validate request payloads before interacting with the database.
+
 ---
+
+##  What is Zod?
+
+Zod is a runtime validation library that works well with TypeScript.  
+It ensures API inputs are:
+-  Type-safe
+-  Properly validated
+-  Clean and meaningful in error responses
 
 
 

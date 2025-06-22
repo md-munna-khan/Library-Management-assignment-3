@@ -1,19 +1,30 @@
 import express, { Request, Response } from "express";
 import { BookModel } from "../models/book.models";
 export const booksRoutes = express.Router();
-
+import { z } from "zod";
+const CreateBookZodSchema = z.object({
+ title:z.string(),
+    author:z.string(),
+    genre: z.enum(
+    ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"],),
+    isbn:z.string(),
+    description:z.string().optional(),
+    copies:z.number(),
+    available:z.boolean().optional(),
+});
 // book -post
 booksRoutes.post("/", async (req: Request, res: Response) => {
-  const body = req.body;
+  
   try {
-    const data = await BookModel.create(body);
+    const zodBody = CreateBookZodSchema.parse(req.body)
+    const data = await BookModel.create(zodBody);
     res.status(201).json({
       success: true,
       message: "Book created successfully",
       data,
     });
   } catch (error: any) {
-    console.log(error)
+   
     res.status(400).json({
       message: "Validation failed",
       success: false,

@@ -2,14 +2,22 @@ import express, { Request, Response } from "express";
 
 import { BorrowModel } from "../models/borrow.models";
 export const borrowsRoutes = express.Router();
-
+import { z } from "zod";
+const CreateBorrowZodSchema = z.object({
+book:z.string(),
+  quantity:z.number(),
+  dueDate:z.string()
+});
 // borrow -post
 borrowsRoutes.post("/", async (req: Request, res: Response) => {
   try {
+const zodBodyBorrow= CreateBorrowZodSchema.parse(req.body)
+    // const { book, quantity, dueDate } = req.body;
 
-    const { book, quantity, dueDate } = req.body;
-
-    const data = await BorrowModel.Borrow(book, quantity, new Date(dueDate));
+    const data = await BorrowModel.Borrow(
+      zodBodyBorrow.book, 
+      zodBodyBorrow.quantity,
+     new Date(zodBodyBorrow.dueDate));
     res.status(201).json({
       success: true,
       message: "Book borrowed successfully",

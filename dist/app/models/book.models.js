@@ -16,7 +16,14 @@ const bookSchema = new mongoose_1.Schema({
     genre: {
         type: String,
         enum: {
-            values: ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"],
+            values: [
+                "FICTION",
+                "NON_FICTION",
+                "SCIENCE",
+                "HISTORY",
+                "BIOGRAPHY",
+                "FANTASY",
+            ],
             message: "Genre must be one of: FICTION, NON_FICTION, SCIENCE, HISTORY, BIOGRAPHY, or FANTASY",
         },
         required: [true, "Genre is required."],
@@ -24,9 +31,12 @@ const bookSchema = new mongoose_1.Schema({
     },
     isbn: {
         type: String,
-        required: [true, "ISBN (International Standard Book Number) is required."],
-        trim: true,
-        unique: [true, "ISBN must be unique"]
+        required: [
+            true,
+            "ISBN (International Standard Book Number) is required.",
+        ],
+        unique: true,
+        trim: true
     },
     description: {
         type: String,
@@ -40,7 +50,7 @@ const bookSchema = new mongoose_1.Schema({
     available: {
         type: Boolean,
         default: true,
-    }
+    },
 }, {
     versionKey: false,
     timestamps: true,
@@ -53,7 +63,7 @@ bookSchema.post("findOne", function (doc, next) {
     next();
 });
 // query middleware
-bookSchema.pre('deleteOne', { document: true, query: false }, function () {
-    console.log('Deleting doc!');
-});
+// bookSchema.pre('deleteOne', { document: true, query: false }, function() {
+//   console.log('Deleting doc!');
+// });
 exports.BookModel = (0, mongoose_1.model)("Book", bookSchema);

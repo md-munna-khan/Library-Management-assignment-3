@@ -16,11 +16,21 @@ exports.booksRoutes = void 0;
 const express_1 = __importDefault(require("express"));
 const book_models_1 = require("../models/book.models");
 exports.booksRoutes = express_1.default.Router();
+const zod_1 = require("zod");
+const CreateBookZodSchema = zod_1.z.object({
+    title: zod_1.z.string(),
+    author: zod_1.z.string(),
+    genre: zod_1.z.enum(["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"]),
+    isbn: zod_1.z.string(),
+    description: zod_1.z.string().optional(),
+    copies: zod_1.z.number(),
+    available: zod_1.z.boolean().optional(),
+});
 // book -post
 exports.booksRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const body = req.body;
     try {
-        const data = yield book_models_1.BookModel.create(body);
+        const zodBody = CreateBookZodSchema.parse(req.body);
+        const data = yield book_models_1.BookModel.create(zodBody);
         res.status(201).json({
             success: true,
             message: "Book created successfully",
@@ -28,7 +38,6 @@ exports.booksRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
     catch (error) {
-        console.log(error);
         res.status(400).json({
             message: "Validation failed",
             success: false,

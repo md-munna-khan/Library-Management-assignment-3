@@ -16,11 +16,18 @@ exports.borrowsRoutes = void 0;
 const express_1 = __importDefault(require("express"));
 const borrow_models_1 = require("../models/borrow.models");
 exports.borrowsRoutes = express_1.default.Router();
+const zod_1 = require("zod");
+const CreateBorrowZodSchema = zod_1.z.object({
+    book: zod_1.z.string(),
+    quantity: zod_1.z.number(),
+    dueDate: zod_1.z.string()
+});
 // borrow -post
 exports.borrowsRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { book, quantity, dueDate } = req.body;
-        const data = yield borrow_models_1.BorrowModel.Borrow(book, quantity, new Date(dueDate));
+        const zodBodyBorrow = CreateBorrowZodSchema.parse(req.body);
+        // const { book, quantity, dueDate } = req.body;
+        const data = yield borrow_models_1.BorrowModel.Borrow(zodBodyBorrow.book, zodBodyBorrow.quantity, new Date(zodBodyBorrow.dueDate));
         res.status(201).json({
             success: true,
             message: "Book borrowed successfully",
